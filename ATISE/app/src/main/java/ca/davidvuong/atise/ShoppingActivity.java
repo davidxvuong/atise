@@ -11,7 +11,11 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.*;
 
 public class ShoppingActivity extends AppCompatActivity {
     private NfcAdapter nfc;
@@ -19,12 +23,29 @@ public class ShoppingActivity extends AppCompatActivity {
     private IntentFilter[] readTagFilters;
     private Tag detectedTag;
 
+    //to be removed
+    private Button barcodeButton;
+
+    private ShoppingActivity getInstance() {
+        return this;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         getSupportActionBar().hide();
 
+        barcodeButton = (Button)findViewById(R.id.tmpBarcodeBtn);
+        barcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Invoke third party app
+                IntentIntegrator t = new IntentIntegrator(getInstance());
+
+                t.initiateScan();
+            }
+        });
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
@@ -94,5 +115,13 @@ public class ShoppingActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode ,data);
+
+        if (result != null) {
+            String scanContent = result.getContents();
+
+            Toast.makeText(this, scanContent, Toast.LENGTH_LONG).show();
+        }
     }
 }
