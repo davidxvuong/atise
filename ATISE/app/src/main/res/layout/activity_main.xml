@@ -12,7 +12,6 @@
         android:layout_above="@+id/button1"
         android:layout_centerHorizontal="true"
         android:textSize="32sp"
-        android:layout="centre"
         android:id="@+id/textView" />
 
     <Button
@@ -25,7 +24,6 @@
         android:textColor="#ffffff"
         android:clickable="true"
         android:shape="rectangle"
-        android:textsize="25sp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:width="1dp"
@@ -35,7 +33,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/imageView"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/LOGO"
         android:layout_above="@+id/textView"
         android:layout_centerHorizontal="true" />
 

@@ -10,13 +10,39 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView2" />
 
-    <Button
-        android:id="@+id/btn_AlertDialog"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Payment Successful! Thank You! "
+        android:textColor="#7030A0"
+        android:id="@+id/textView6"
+        android:layout_marginTop="139dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:id="@+id/Button2"
+        android:layout_marginBottom="90dp"
+        android:clickable="true"
+        android:background="#7030A0"
+        android:textColor="#FFFFFF"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+
+    <ImageView
+
+        android:id="@+id/imageView3"
+        android:src="@mipmap/ic_launcher"
         android:layout_centerVertical="true"
-        android:text="Payment Sucessful! Thank YOu!"
-        android:textColor="#7030A0"/>
+        android:layout_centerHorizontal="true"
+        android:layout_width="100dp"
+        android:layout_height="200dp"/>
+
 
 </RelativeLayout>
