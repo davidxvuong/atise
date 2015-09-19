@@ -33,10 +33,10 @@ public class ShoppingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+        setContentView(R.layout.activity_shopping);
         getSupportActionBar().hide();
-
-        barcodeButton = (Button)findViewById(R.id.tmpBarcodeBtn);
+        /**
+        barcodeButton = (Button) findViewById(R.id.tmpBarcodeBtn);
         barcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,6 +46,7 @@ public class ShoppingActivity extends AppCompatActivity {
                 t.initiateScan();
             }
         });
+         **/
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
