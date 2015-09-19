@@ -24,6 +24,14 @@
             android:name=".mainpage2"
             android:label="@string/title_activity_mainpage2" >
         </activity>
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name=".Main2"
+            android:label="@string/title_activity_main2" >
+        </activity>
     </application>
 
 </manifest>

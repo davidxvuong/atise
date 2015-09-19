@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_mainscreen">mainscreen</string>
     <string name="title_activity_mainpage2">mainpage2</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_main2">Main2</string>
 </resources>
