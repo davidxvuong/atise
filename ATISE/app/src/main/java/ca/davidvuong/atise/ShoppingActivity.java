@@ -11,8 +11,9 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.*;
@@ -23,9 +24,6 @@ public class ShoppingActivity extends AppCompatActivity {
     private IntentFilter[] readTagFilters;
     private Tag detectedTag;
 
-    //to be removed
-    private Button barcodeButton;
-
     private ShoppingActivity getInstance() {
         return this;
     }
@@ -34,19 +32,7 @@ public class ShoppingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping);
-        getSupportActionBar().hide();
-        /**
-        barcodeButton = (Button) findViewById(R.id.tmpBarcodeBtn);
-        barcodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Invoke third party app
-                IntentIntegrator t = new IntentIntegrator(getInstance());
 
-                t.initiateScan();
-            }
-        });
-         **/
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
@@ -124,5 +110,30 @@ public class ShoppingActivity extends AppCompatActivity {
 
             Toast.makeText(this, scanContent, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_shopping_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_scan:
+                startScan();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void startScan() {
+        IntentIntegrator t = new IntentIntegrator(getInstance());
+        t.initiateScan();
     }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">#6f3996</item>
-        <item name="colorAccent">#6f3996</item>
+        <item name="colorPrimaryDark">#441169</item>
+        <item name="android:colorAccent">#6f3996</item>
+        <item name="android:buttonTint">#6f3996</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:icon">@mipmap/ic_launcher</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:icon">@android:color/transparent</item>
     </style>
 </resources>
