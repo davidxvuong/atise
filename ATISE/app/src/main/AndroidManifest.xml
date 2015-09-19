@@ -9,6 +9,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,16 +19,24 @@
         </activity>
         <activity
             android:name=".ShoppingActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="ShoppingActivity" >
         </activity>
         <activity
             android:name=".SuccessActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="SuccessActivity" >
         </activity>
         <activity
             android:name=".FailActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="FailActivity" >
         </activity>
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NFC" />
 
 </manifest>
