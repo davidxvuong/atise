@@ -5,7 +5,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView android:text="Fast, Easy, Atise" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:textColor="#7030A0"
+        android:layout_above="@+id/button1"
+        android:layout_centerHorizontal="true"
+        android:textSize="32sp"
+        android:layout="centre"
+        android:id="@+id/textView" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:layout_marginBottom="69dp"
+        android:background="#7030A0"
+        android:textColor="#ffffff"
+        android:clickable="true"
+        android:shape="rectangle"
+        android:textsize="25sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:width="1dp"
+        android:radius="10dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:
+        android:src="@mipmap/ic_launcher"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/button1" />
+
 
 </RelativeLayout>

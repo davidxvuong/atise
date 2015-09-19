@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".mainscreen"
+            android:label="@string/title_activity_mainscreen" >
+        </activity>
+        <activity
+            android:name=".mainpage2"
+            android:label="@string/title_activity_mainpage2" >
+        </activity>
     </application>
 
 </manifest>
