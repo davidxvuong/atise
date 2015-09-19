@@ -21,8 +21,9 @@
         android:src="@mipmap/ic_shopping_check"
         android:layout_below="@+id/success_txt"
         android:layout_centerHorizontal="true"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
+        android:padding="50px"
+        android:layout_width="150dp"
+        android:layout_height="150dp"/>
 
     <Button
         android:layout_width="wrap_content"
