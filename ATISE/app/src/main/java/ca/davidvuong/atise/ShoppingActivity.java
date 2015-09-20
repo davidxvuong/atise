@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.zxing.integration.android.*;
 
@@ -71,17 +69,73 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
 
         readTagFilters = new IntentFilter[] {tagDetected, filter2};
 
-        ArrayList<Row> initialrows = new ArrayList<Row>();
-        initialrows.add(new Row("candy", "$25"));
-        initialrows.add(new Row("chocolate", "$30"));
+        Firebase cartRef = ref.child("carts").child(ref.getAuth().getUid());
 
-        UsersAdapter adapter = new UsersAdapter(this, initialrows);
+        ValueEventListener cartListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, String> raw = (HashMap<String, String>) snapshot.getValue();
+                    List<String> cartItems = new ArrayList<String>();
+                    for (String pid : raw.values()) {
+                        cartItems.add(pid);
+                    }
+                    listHandler(cartItems);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with cart retrieval.");
+            }
+        };
+
+        cartRef.addValueEventListener(cartListener);
+    }
+
+    private void listHandler(List<String> cartItems) {
+        Firebase cartRef = ref.child("items");
+        final List<String> fCart = cartItems;
+
+        ValueEventListener tmpListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Iterable<DataSnapshot> items = snapshot.getChildren();
+
+                double amount = 0.0;
+                ArrayList<Row> itemrows = new ArrayList<Row>();
+                List<String> itemKeys = new ArrayList<String>();
+                Map<String, DataSnapshot> itemData = new HashMap<String, DataSnapshot>();
+                for (DataSnapshot item : items) {
+                    itemKeys.add(item.getKey());
+                    itemData.put(item.getKey(), item);
+                }
+
+                for (String k : fCart) {
+                    if (itemKeys.contains(k)) {
+                        Map<String, Object> vals = (Map<String, Object>) itemData.get(k).getValue();
+                        amount += Double.parseDouble(vals.get("price").toString());
+                        itemrows.add(new Row(vals.get("name").toString(), "$" + vals.get("price").toString()));
+                    }
+                }
+
+                setListAdapter(itemrows);
+                setPrice(amount);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with list setup.");
+            }
+        };
+
+        cartRef.addListenerForSingleValueEvent(tmpListener);
+    }
+
+    private void setListAdapter(ArrayList<Row> rows) {
+        UsersAdapter adapter = new UsersAdapter(this, rows);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
-
-        //Row newUser = new Row("item_name", "$item_cost");
-        //adapter.add(newUser);
-        SetPrice(1024);
     }
 
     protected void onNewIntent(Intent intent) {
@@ -94,7 +148,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
         }
     }
 
-    private void SetPrice(double subtotal){
+    private void setPrice(double subtotal){
 
         TextView subtotalView = (TextView) findViewById(R.id.SubtotalValue);
         TextView taxView=(TextView) findViewById(R.id.TaxValue);
@@ -293,9 +347,16 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
                 Iterable<DataSnapshot> items = snapshot.getChildren();
 
                 double amount = 0.0;
+                List<String> itemKeys = new ArrayList<String>();
+                Map<String, DataSnapshot> itemData = new HashMap<String, DataSnapshot>();
                 for (DataSnapshot item : items) {
-                    if (fCart.contains(item.getKey())) {
-                        Map<String, Object> vals = (Map<String, Object>) item.getValue();
+                    itemKeys.add(item.getKey());
+                    itemData.put(item.getKey(), item);
+                }
+
+                for (String k : fCart) {
+                    if (itemKeys.contains(k)) {
+                        Map<String, Object> vals = (Map<String, Object>) itemData.get(k).getValue();
                         amount += Double.parseDouble(vals.get("price").toString());
                     }
                 }
