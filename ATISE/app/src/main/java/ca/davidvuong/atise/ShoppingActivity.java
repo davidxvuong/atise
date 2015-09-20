@@ -36,7 +36,7 @@ public class ShoppingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         getSupportActionBar().hide();
 
-        barcodeButton = (Button)findViewById(R.id.tmpBarcodeBtn);
+        /*barcodeButton = (Button)findViewById(R.id.tmpBarcodeBtn);
         barcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +45,7 @@ public class ShoppingActivity extends AppCompatActivity {
 
                 t.initiateScan();
             }
-        });
+        });*/
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
