@@ -19,9 +19,12 @@ import android.widget.Toast;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.zxing.integration.android.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -160,7 +163,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Map<String, Object> raw = (Map<String, Object>) snapshot.getValue();
-                    cartHandler(fBarcode, (double) raw.get("price"));
+                    ref.child("carts").child(ref.getAuth().getUid()).push().setValue(fBarcode);
                 }
                 else {
                     makeToast("Barcode not found! Please try again.");
@@ -173,44 +176,110 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
             }
         };
 
-        Firebase itemsRef = ref.child("items").child(barcode);
+        Firebase itemsRef = ref.child("items").child(fBarcode);
 
         itemsRef.addListenerForSingleValueEvent(tmpListener);
-        itemsRef.removeEventListener(tmpListener);
     }
 
-    private void cartHandler(String pid, double price) {
-        final String fPid = pid;
-        final double fPrice = price;
-        final Firebase cartRef = ref.child("carts").child(ref.getAuth().getUid());
-        Map<String, Object> raw = null;
+    private void checkoutHandler() {
+        Firebase usersRef = ref.child("users").child(ref.getAuth().getUid());
 
         ValueEventListener tmpListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    cartRef.setValue("{\"contents\":[], \"total\":0.0}");
+                if (snapshot.exists()) {
+                    Map<String, Object> raw = (Map<String, Object>) snapshot.getValue();
+
+                    String creditCardNum = (String) raw.get("ccn");
+                    String expDate = (String) raw.get("exp");
+                    String cvv = (String) raw.get("ccv");
+
+                    finPriceHandler(creditCardNum, expDate, cvv);
+                }
+                else {
+                    makeToast("Severe panic error: user not found!");
                 }
             }
 
             @Override
             public void onCancelled(FirebaseError error) {
-                makeToast("Error: Something went wrong with cart setup.");
+                makeToast("Error: Something went wrong with user retrieval.");
+            }
+        };
+
+        usersRef.addListenerForSingleValueEvent(tmpListener);
+    }
+
+    private void finPriceHandler(String ccn, String exp, String cvv) {
+        final String fCredit = ccn;
+        final String fExp = exp;
+        final String fCVV = cvv;
+
+        Firebase cartRef = ref.child("carts").child(ref.getAuth().getUid());
+
+        ValueEventListener tmpListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, String> raw = (HashMap<String, String>) snapshot.getValue();
+                    List<String> cartItems = new ArrayList<String>();
+                    for (String pid : raw.values()) {
+                        cartItems.add(pid);
+                    }
+                    paymentHandler(fCredit, fExp, fCVV, cartItems);
+                }
+                else {
+                    makeToast("You have no items in the cart!");
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with cart retrieval.");
             }
         };
 
         cartRef.addListenerForSingleValueEvent(tmpListener);
-        cartRef.removeEventListener(tmpListener);
-        cartRef.child("contents").push().setValue(fPid);
     }
 
-    private void checkoutHandler() {
-        makeToast("Checkout!");
-        //@TODO: Assume you have info on credit card and total
-        String creditCardNum, expDate, cvv, amount;
-        processPayment = new BraintreeAsyncTask(this, creditCardNum, expDate, cvv, amount);
+    private void paymentHandler(String ccn, String exp, String cvv, List<String> cart) {
+        final String fCredit = ccn;
+        final String fExp = exp;
+        final String fCVV = cvv;
+        final List<String> fCart = cart;
+
+        Firebase cartRef = ref.child("items");
+
+        ValueEventListener tmpListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Iterable<DataSnapshot> items = snapshot.getChildren();
+
+                double amount = 0.0;
+                for (DataSnapshot item : items) {
+                    if (fCart.contains(item.getKey())) {
+                        Map<String, Object> vals = (Map<String, Object>) item.getValue();
+                        amount += Double.parseDouble(vals.get("price").toString());
+                    }
+                }
+
+                pay(fCredit, fExp, fCVV, amount);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with cart retrieval.");
+            }
+        };
+
+        cartRef.addListenerForSingleValueEvent(tmpListener);
+    }
+    private void pay(String fCredit, String fExp, String fCVV, double amount) {
+        makeToast(fCredit + " " + fExp + " " + fCVV + " " + String.valueOf(amount));
+        processPayment = new BraintreeAsyncTask(this, fCredit, fExp, fCVV, String.valueOf(amount));
         processPayment.execute();
     }
+
 
     private void makeToast (String toast) {
         Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
@@ -222,6 +291,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
 
         if (result == true) {
             //payment process went through. display success activity
+            ref.child("carts").child(ref.getAuth().getUid()).removeValue();
             i = new Intent(ShoppingActivity.this, SuccessActivity.class);
             startActivity(i);
             finish();
