@@ -25,16 +25,13 @@ import com.google.zxing.integration.android.*;
 import java.util.List;
 import java.util.Map;
 
-public class ShoppingActivity extends AppCompatActivity {
+public class ShoppingActivity extends AppCompatActivity implements AsyncResponse {
     private Firebase ref;
     private NfcAdapter nfc;
     private PendingIntent nfcPendingIntent;
     private IntentFilter[] readTagFilters;
     private Tag detectedTag;
-
-    private ShoppingActivity getInstance() {
-        return this;
-    }
+    private BraintreeAsyncTask processPayment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +148,7 @@ public class ShoppingActivity extends AppCompatActivity {
     }
 
     private void startScan() {
-        IntentIntegrator t = new IntentIntegrator(getInstance());
+        IntentIntegrator t = new IntentIntegrator(ShoppingActivity.this);
         t.initiateScan();
     }
 
@@ -210,9 +207,30 @@ public class ShoppingActivity extends AppCompatActivity {
     private void checkoutHandler() {
         makeToast("Checkout!");
         //@TODO: Assume you have info on credit card and total
+        String creditCardNum, expDate, cvv, amount;
+        processPayment = new BraintreeAsyncTask(this, creditCardNum, expDate, cvv, amount);
+        processPayment.execute();
     }
 
     private void makeToast (String toast) {
         Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void processFinish(boolean result) {
+        Intent i;
+
+        if (result == true) {
+            //payment process went through. display success activity
+            i = new Intent(ShoppingActivity.this, SuccessActivity.class);
+            startActivity(i);
+            finish();
+        }
+        else {
+            //payment process failed. display failed activity
+            i = new Intent(ShoppingActivity.this, FailActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 }
