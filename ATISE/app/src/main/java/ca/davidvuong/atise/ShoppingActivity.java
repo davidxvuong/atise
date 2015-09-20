@@ -30,6 +30,13 @@ public class ShoppingActivity extends AppCompatActivity {
         return this;
     }
 
+
+
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
