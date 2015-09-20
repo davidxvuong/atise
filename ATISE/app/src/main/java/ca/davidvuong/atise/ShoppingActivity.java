@@ -11,6 +11,7 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -118,12 +119,13 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode ,data);
-
-        if (result != null) {
-            String scanContent = result.getContents();
-            barcodeHandler(scanContent);
+            if (result != null) {
+                String scanContent = result.getContents();
+                barcodeHandler(scanContent);
+            }
         }
     }
 
@@ -156,7 +158,8 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
     }
 
     private void barcodeHandler(String barcode) {
-        final String fBarcode = barcode;
+        String neuBarcode = barcode.replaceAll("[^A-Za-z0-9]", "");
+        final String fBarcode = neuBarcode;
 
         ValueEventListener tmpListener = new ValueEventListener() {
             @Override
@@ -274,12 +277,11 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
 
         cartRef.addListenerForSingleValueEvent(tmpListener);
     }
+
     private void pay(String fCredit, String fExp, String fCVV, double amount) {
-        makeToast(fCredit + " " + fExp + " " + fCVV + " " + String.valueOf(amount));
         processPayment = new BraintreeAsyncTask(this, fCredit, fExp, fCVV, String.valueOf(amount));
         processPayment.execute();
     }
-
 
     private void makeToast (String toast) {
         Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
