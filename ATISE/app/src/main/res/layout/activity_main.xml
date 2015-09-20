@@ -14,7 +14,7 @@
         android:layout_marginTop="50dp"
         android:layout_centerHorizontal="true" />
 
-    <TextView android:text="Atise: Shop at ease"
+    <TextView android:text="Atise: Shop at Ease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="36dp"

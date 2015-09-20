@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -26,9 +29,13 @@ public class UsersAdapter extends ArrayAdapter<Row> {
         // Lookup view for data population
         TextView item_name = (TextView) convertView.findViewById(R.id.item_name);
         TextView item_price = (TextView) convertView.findViewById(R.id.item_price);
+        ImageView item_pic = (ImageView) convertView.findViewById(R.id.Image);
         // Populate the data into the template view using the data object
         item_name.setText(row.name);
         item_price.setText(row.price);
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(row.url,item_pic);
+
         // Return the completed view to render on screen
         return convertView;
     }

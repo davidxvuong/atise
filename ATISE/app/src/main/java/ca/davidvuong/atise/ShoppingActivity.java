@@ -25,6 +25,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.zxing.integration.android.*;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +46,13 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader.getInstance().init(config);
+
         setContentView(R.layout.activity_shopping);
+
+
+
         Firebase.setAndroidContext(this);
         ref = new Firebase("https://luminous-fire-9033.firebaseio.com");
 
@@ -115,7 +123,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
                     if (itemKeys.contains(k)) {
                         Map<String, Object> vals = (Map<String, Object>) itemData.get(k).getValue();
                         amount += Double.parseDouble(vals.get("price").toString());
-                        itemrows.add(new Row(vals.get("name").toString(), "$" + vals.get("price").toString()));
+                        itemrows.add(new Row(vals.get("name").toString(), "$" + vals.get("price").toString(),"http://lloydtorres.com/images/blog/20150919/mumbo-jumbo.png"));
                     }
                 }
 
@@ -153,13 +161,11 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
         TextView subtotalView = (TextView) findViewById(R.id.SubtotalValue);
         TextView taxView=(TextView) findViewById(R.id.TaxValue);
         TextView totalView=(TextView) findViewById(R.id.TotalValue);
-        TextView totalView2=(TextView) findViewById(R.id.TotalValue2);
 
         DecimalFormat df = new DecimalFormat("#.00");
         subtotalView.setText("$"+df.format(subtotal));
         taxView.setText("$"+df.format(subtotal*0.13));
         totalView.setText("$"+df.format(subtotal*1.13));
-        totalView2.setText("$"+df.format(subtotal*1.13));
 
         return;
     }
