@@ -130,6 +130,9 @@ public class ShoppingActivity extends AppCompatActivity {
             case R.id.action_scan:
                 startScan();
                 return true;
+            case R.id.action_checkout:
+                checkoutHandler();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -143,5 +146,10 @@ public class ShoppingActivity extends AppCompatActivity {
     private void barcodeHandler(String barcode) {
         Toast.makeText(this, barcode, Toast.LENGTH_LONG).show();
         //@TODO
+    }
+
+    private void checkoutHandler() {
+        Toast.makeText(this, "Checkout!", Toast.LENGTH_LONG).show();
+        //@TODO: Assume you have info on credit card and total
     }
 }
