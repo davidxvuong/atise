@@ -16,8 +16,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.zxing.integration.android.*;
+
+import java.util.List;
+import java.util.Map;
 
 public class ShoppingActivity extends AppCompatActivity {
     private Firebase ref;
@@ -40,13 +46,13 @@ public class ShoppingActivity extends AppCompatActivity {
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
-            Toast.makeText(this, "Error: NFC not supported!", Toast.LENGTH_LONG).show();
+            makeToast("Error: NFC not supported!");
             finish();
             return;
         }
 
         if (!nfc.isEnabled()) {
-            Toast.makeText(this, "Enable NFC before using the app!", Toast.LENGTH_LONG).show();
+            makeToast("Enable NFC before using the app!");
             finish();
             return;
         }
@@ -87,13 +93,19 @@ public class ShoppingActivity extends AppCompatActivity {
 
                 byte[] payload = record.getPayload();
                 String barcode = new String(payload);
-                barcodeHandler(barcode);
+                if (barcode != null) {
+                    barcodeHandler(barcode);
+                }
+                else {
+                    makeToast("Error: Cannot read tag!");
+                }
+
 
                 ndef.close();
             }
         }
         catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error: Cannot read tag!", Toast.LENGTH_LONG).show();
+            makeToast("Error: Cannot read tag!");
         }
     }
 
@@ -144,12 +156,63 @@ public class ShoppingActivity extends AppCompatActivity {
     }
 
     private void barcodeHandler(String barcode) {
-        Toast.makeText(this, barcode, Toast.LENGTH_LONG).show();
-        //@TODO
+        final String fBarcode = barcode;
+
+        ValueEventListener tmpListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, Object> raw = (Map<String, Object>) snapshot.getValue();
+                    cartHandler(fBarcode, (double) raw.get("price"));
+                }
+                else {
+                    makeToast("Barcode not found! Please try again.");
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with item retrieval.");
+            }
+        };
+
+        Firebase itemsRef = ref.child("items").child(barcode);
+
+        itemsRef.addListenerForSingleValueEvent(tmpListener);
+        itemsRef.removeEventListener(tmpListener);
+    }
+
+    private void cartHandler(String pid, double price) {
+        final String fPid = pid;
+        final double fPrice = price;
+        final Firebase cartRef = ref.child("carts").child(ref.getAuth().getUid());
+        Map<String, Object> raw = null;
+
+        ValueEventListener tmpListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    cartRef.setValue("{\"contents\":[], \"total\":0.0}");
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                makeToast("Error: Something went wrong with cart setup.");
+            }
+        };
+
+        cartRef.addListenerForSingleValueEvent(tmpListener);
+        cartRef.removeEventListener(tmpListener);
+        cartRef.child("contents").push().setValue(fPid);
     }
 
     private void checkoutHandler() {
-        Toast.makeText(this, "Checkout!", Toast.LENGTH_LONG).show();
+        makeToast("Checkout!");
         //@TODO: Assume you have info on credit card and total
+    }
+
+    private void makeToast (String toast) {
+        Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
     }
 }
