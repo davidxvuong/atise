@@ -12,16 +12,29 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.*;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+
+
 
 public class ShoppingActivity extends AppCompatActivity {
     private NfcAdapter nfc;
     private PendingIntent nfcPendingIntent;
     private IntentFilter[] readTagFilters;
     private Tag detectedTag;
+    private SimpleAdapter simpleAdpt;
+
+
 
     //to be removed
     private Button barcodeButton;
@@ -30,11 +43,69 @@ public class ShoppingActivity extends AppCompatActivity {
         return this;
     }
 
+
+
+    private void SetPrice(double subtotal){
+
+        TextView subtotalView = (TextView) findViewById(R.id.SubtotalValue);
+        TextView taxView=(TextView) findViewById(R.id.TaxValue);
+        TextView totalView=(TextView) findViewById(R.id.TotalValue);
+        TextView totalView2=(TextView) findViewById(R.id.TotalValue2);
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        subtotalView.setText("$"+df.format(subtotal));
+        taxView.setText("$"+df.format(subtotal*0.13));
+        totalView.setText("$"+df.format(subtotal*1.13));
+        totalView2.setText("$"+df.format(subtotal*1.13));
+
+        return;
+    }
+
+    private void populateListView(){
+
+
+        // our adapter instance
+        //ArrayAdapterItem adapter = new ArrayAdapterItem(this, R.layout.list_view_row_item, ObjectItemData);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping);
         getSupportActionBar().hide();
+
+
+
+        ArrayList<Row> initialrows = new ArrayList<Row>();
+        initialrows.add(new Row("candy", "$25"));
+        initialrows.add(new Row("chocolate", "$30"));
+
+        UsersAdapter adapter = new UsersAdapter(this, initialrows);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+
+        //Row newUser = new Row("item_name", "$item_cost");
+        //adapter.add(newUser);
+        SetPrice(1024);
+/*
+        ArrayList<String> items = new ArrayList<String>();
+        items.add("row1");
+        items.add("row2");
+        items.add("row3");
+
+
+        ArrayAdapter<String> itemsAdapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        ListView listView = (ListView) findViewById(R.id.lvItems);
+        listView.setAdapter(itemsAdapter);
+*/
+
+
+
+
+
+
+
         /**
         barcodeButton = (Button) findViewById(R.id.tmpBarcodeBtn);
         barcodeButton.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +188,7 @@ public class ShoppingActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode ,data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
         if (result != null) {
             String scanContent = result.getContents();
