@@ -123,7 +123,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
                     if (itemKeys.contains(k)) {
                         Map<String, Object> vals = (Map<String, Object>) itemData.get(k).getValue();
                         amount += Double.parseDouble(vals.get("price").toString());
-                        itemrows.add(new Row(vals.get("name").toString(), "$" + vals.get("price").toString(),"http://lloydtorres.com/images/blog/20150919/mumbo-jumbo.png"));
+                        itemrows.add(new Row(vals.get("name").toString(), "$" + vals.get("price").toString(),vals.get("img").toString()));
                     }
                 }
 
