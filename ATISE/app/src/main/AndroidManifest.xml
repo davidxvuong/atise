@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name=".ShoppingActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:label="@string/app_name" >
@@ -18,22 +18,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShoppingActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:label="ShoppingActivity" >
+            android:label="My Cart" >
         </activity>
         <activity
             android:name=".SuccessActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:label="SuccessActivity" >
+            android:label="Success" >
         </activity>
         <activity
             android:name=".FailActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:label="FailActivity" >
+            android:label="Fail" >
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
