@@ -16,9 +16,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.zxing.integration.android.*;
 
 public class ShoppingActivity extends AppCompatActivity {
+    private Firebase ref;
     private NfcAdapter nfc;
     private PendingIntent nfcPendingIntent;
     private IntentFilter[] readTagFilters;
@@ -32,17 +34,19 @@ public class ShoppingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping);
+        Firebase.setAndroidContext(this);
+        ref = new Firebase("https://luminous-fire-9033.firebaseio.com");
 
         nfc = NfcAdapter.getDefaultAdapter(this);
 
         if (nfc == null) {
-            Toast.makeText(this, "NFC not supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error: NFC not supported!", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         if (!nfc.isEnabled()) {
-            Toast.makeText(this, "Enable NFC before using the app", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Enable NFC before using the app!", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -82,14 +86,14 @@ public class ShoppingActivity extends AppCompatActivity {
                 NdefRecord record = ndefMessages[0].getRecords()[0];
 
                 byte[] payload = record.getPayload();
-                String text = new String(payload);
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+                String barcode = new String(payload);
+                barcodeHandler(barcode);
 
                 ndef.close();
             }
         }
         catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Cannot Read From Tag.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Error: Cannot read tag!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -107,8 +111,7 @@ public class ShoppingActivity extends AppCompatActivity {
 
         if (result != null) {
             String scanContent = result.getContents();
-
-            Toast.makeText(this, scanContent, Toast.LENGTH_LONG).show();
+            barcodeHandler(scanContent);
         }
     }
 
@@ -132,8 +135,13 @@ public class ShoppingActivity extends AppCompatActivity {
         }
     }
 
-    public void startScan() {
+    private void startScan() {
         IntentIntegrator t = new IntentIntegrator(getInstance());
         t.initiateScan();
+    }
+
+    private void barcodeHandler(String barcode) {
+        Toast.makeText(this, barcode, Toast.LENGTH_LONG).show();
+        //@TODO
     }
 }
