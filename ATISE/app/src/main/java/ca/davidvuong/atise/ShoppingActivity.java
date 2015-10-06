@@ -367,7 +367,7 @@ public class ShoppingActivity extends AppCompatActivity implements AsyncResponse
                     }
                 }
 
-                pay(fCredit, fExp, fCVV, amount);
+                pay(fCredit, fExp, fCVV, Math.round(amount * 113.0)/100.0);
             }
 
             @Override

@@ -46,6 +46,7 @@ public class BraintreeAsyncTask extends AsyncTask<Void, Void, Result<Transaction
 
     @Override
     protected void onPostExecute(Result<Transaction> result) {
+        String temp = amount;
         callback.processFinish(result.isSuccess());
     }
 }
